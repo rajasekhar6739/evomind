@@ -14,7 +14,7 @@ function App() {
 
     try {
       const response = await fetch(
-        "${API}/agents/execute",
+        '${API}/agents/execute',
         {
           method: "POST",
           headers: {
