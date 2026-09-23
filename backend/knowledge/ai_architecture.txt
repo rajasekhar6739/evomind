@@ -1,0 +1,16 @@
+EvoMind AI Architecture
+
+EvoMind is a multi-agent AI application.
+
+The system contains an Orchestrator,
+Research Agent, Writer Agent and Automation Agent.
+
+The Universal Tool Layer allows agents to use
+external capabilities such as calculators and automation tools.
+
+RAG allows the system to retrieve relevant information
+from a knowledge base before generating an answer.
+
+The architecture supports AI application development,
+workflow automation, agent orchestration and
+dependency-aware tool execution.
