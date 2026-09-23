@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-
+const API = import.meta.env.VITE_API_URL;
 function App() {
   const [task, setTask] = useState("");
   const [result, setResult] = useState("");
