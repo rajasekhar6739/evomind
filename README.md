@@ -217,7 +217,7 @@ evomind/
 ### 1. Clone the project
 
 ```bash
-git clone <your-repository-url>
+git clone <our-repository-url>
 cd evomind
 ```
 
