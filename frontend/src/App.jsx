@@ -5,40 +5,46 @@ function App() {
   const [task, setTask] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+const runAgent = async () => {
+  if (!task.trim()) return;
 
-  const runAgent = async () => {
-    if (!task.trim()) return;
+  setLoading(true);
+  setResult("");
 
-    setLoading(true);
-    setResult("");
+  try {
+    const response = await fetch(
+      "https://evomind-42wz.onrender.com/agent/execute",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ task }),
+      }
+    );
 
-    try {
-      const response = await fetch(
-        '${API}/agents/execute',
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ task }),
-        }
-      );
-
-      const data = await response.json();
-
-      setResult(
-        data.result?.result ||
-        data.result ||
-        JSON.stringify(data, null, 2)
-      );
-    } catch (error) {
-      setResult(
-        "Could not connect to EvoMind backend. Make sure FastAPI is running on port 8000."
-      );
+    if (!response.ok) {
+      throw new Error(`Backend error: ${response.status}`);
     }
 
-    setLoading(false);
-  };
+    const data = await response.json();
+
+    setResult(
+      data.result?.result ||
+      data.result ||
+      JSON.stringify(data, null, 2)
+    );
+  } catch (error) {
+    console.error(error);
+
+    setResult(
+      "Could not connect to EvoMind backend."
+    );
+  }
+
+  setLoading(false);
+};
+ 
 
   return (
     <div className="app">

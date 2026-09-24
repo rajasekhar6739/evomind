@@ -1,17 +1,113 @@
+<<<<<<< HEAD
 import re
 
 from tools.registry import execute_tool
 from services.ai import ask_ai
 
+=======
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
 from agents.research import research_agent
 from agents.writer import writer_agent
 from agents.automation import automation_agent
+from tools.registry import execute_tool
+
+
+def detect_agent(task: str) -> str:
+    text = task.lower().strip()
+
+    # -------------------------
+    # Calculator
+    # -------------------------
+    calculator_words = [
+        "calculate",
+        "calculator",
+        "multiply",
+        "divide",
+        "addition",
+        "add",
+        "subtract",
+        "minus",
+        "times",
+    ]
+
+    if (
+        any(word in text for word in calculator_words)
+        or any(symbol in text for symbol in ["*", "+", "/"])
+    ):
+        return "calculator"
+
+    # -------------------------
+    # Research
+    # -------------------------
+    research_words = [
+        "research",
+        "what is",
+        "who is",
+        "explain",
+        "find information",
+        "analyze",
+        "analysis",
+        "compare",
+        "difference between",
+        "how does",
+        "why does",
+        "latest information",
+    ]
+
+    if any(word in text for word in research_words):
+        return "research"
+
+    # -------------------------
+    # Writer
+    # -------------------------
+    writer_words = [
+        "write",
+        "draft",
+        "email",
+        "cover letter",
+        "resume",
+        "cv",
+        "article",
+        "blog",
+        "rewrite",
+        "rewrite this",
+        "create content",
+        "professional message",
+    ]
+
+    if any(word in text for word in writer_words):
+        return "writer"
+
+    # -------------------------
+    # Automation
+    # -------------------------
+    automation_words = [
+        "automate",
+        "automation",
+        "workflow",
+        "schedule",
+        "automatically",
+        "create a workflow",
+        "build a workflow",
+        "run workflow",
+    ]
+
+    if any(word in text for word in automation_words):
+        return "automation"
+
+    # Default
+    return "research"
 
 
 def execute_task(task: str):
 
-    task_lower = task.lower().strip()
+    if not task or not task.strip():
+        return {
+            "status": "error",
+            "message": "Task cannot be empty"
+        }
 
+<<<<<<< HEAD
     # =========================================================
     # 1. CALCULATOR
     # =========================================================
@@ -59,23 +155,33 @@ def execute_task(task: str):
         expression = expression.replace("minus", "-")
 
         expression = expression.strip()
+=======
+    agent = detect_agent(task)
+
+    # -------------------------
+    # Calculator
+    # -------------------------
+    if agent == "calculator":
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
 
         result = execute_tool(
             "calculator",
-            expression
+            task
         )
 
         return {
-            "task": task,
+            "status": "success",
             "agent": "orchestrator",
             "tool_selected": "calculator",
             "result": result
         }
 
-    # =========================================================
-    # 2. RESEARCH AGENT
-    # =========================================================
+    # -------------------------
+    # Research Agent
+    # -------------------------
+    if agent == "research":
 
+<<<<<<< HEAD
     research_words = [
         "research",
         "research on",
@@ -101,13 +207,22 @@ def execute_task(task: str):
             "task": task,
             "agent": "research_agent",
             "tool_selected": "research_agent",
+=======
+        result = research_agent(task)
+
+        return {
+            "status": "success",
+            "agent": "research",
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
             "result": result
         }
 
-    # =========================================================
-    # 3. WRITER AGENT
-    # =========================================================
+    # -------------------------
+    # Writing Agent
+    # -------------------------
+    if agent == "writer":
 
+<<<<<<< HEAD
     writer_words = [
         "write",
         "writer",
@@ -132,13 +247,22 @@ def execute_task(task: str):
             "task": task,
             "agent": "writer_agent",
             "tool_selected": "writer_agent",
+=======
+        result = writer_agent(task)
+
+        return {
+            "status": "success",
+            "agent": "writer",
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
             "result": result
         }
 
-    # =========================================================
-    # 4. AUTOMATION AGENT
-    # =========================================================
+    # -------------------------
+    # Automation Agent
+    # -------------------------
+    if agent == "automation":
 
+<<<<<<< HEAD
     automation_words = [
         "automate",
         "automation",
@@ -158,22 +282,25 @@ def execute_task(task: str):
             "task": task,
             "agent": "automation_agent",
             "tool_selected": "automation_agent",
+=======
+        result = automation_agent(task)
+
+        return {
+            "status": "success",
+            "agent": "automation",
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
             "result": result
         }
 
-    # =========================================================
-    # 5. GENERAL AI
-    # =========================================================
-
-    response = ask_ai(
-        "You are the EvoMind general AI assistant. "
-        "Answer the user's request clearly and helpfully.",
-        task
-    )
-
     return {
+<<<<<<< HEAD
         "task": task,
         "agent": "general_ai",
         "tool_selected": "general_ai",
         "result": response
     }
+=======
+        "status": "error",
+        "message": "No suitable agent found"
+    }
+>>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
