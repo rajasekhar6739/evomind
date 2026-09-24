@@ -35,7 +35,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://evomind-nine.vercel.app",
+        "https://evomind-1.onrender.com",
     ],
     allow_credentials=False,
     allow_methods=["*"],
