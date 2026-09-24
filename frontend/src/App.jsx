@@ -10,39 +10,24 @@ const runAgent = async () => {
   setLoading(true);
   setResult("");
 
-  const API_URL = "https://evomind-ouhh.onrender.com";
-
   try {
-    console.log("Calling:", `${API_URL}/agent/execute`);
+    const response = await fetch(
+      "https://evomind-ouhh.onrender.com/agent/execute",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ task: task.trim() }),
+      }
+    );
 
-    const response = await fetch(`${API_URL}/agent/execute`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        task: task.trim(),
-      }),
-    });
-
-    console.log("HTTP status:", response.status);
-
-    const text = await response.text();
-    console.log("Raw response:", text);
+    const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(`Backend returned ${response.status}: ${text}`);
+      throw new Error(data?.detail || `HTTP ${response.status}`);
     }
-
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error("Backend returned invalid JSON");
-    }
-
-    console.log("Parsed response:", data);
 
     setResult(
       data?.result?.result ??
@@ -50,16 +35,12 @@ const runAgent = async () => {
       JSON.stringify(data, null, 2)
     );
   } catch (error) {
-    console.error("EvoMind connection error:", error);
-
-    setResult(
-      `Connection failed: ${error.message}`
-    );
+    console.error(error);
+    setResult(`Connection failed: ${error.message}`);
   } finally {
     setLoading(false);
   }
 };
- 
 
   return (
     <div className="app">
