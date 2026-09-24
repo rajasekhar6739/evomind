@@ -11,7 +11,7 @@ const runAgent = async () => {
   setResult("");
 
   try {
-    const API_URL ="htps://evomind-ouhh.onrender.com";
+    const API_URL ="https://evomind-ouhh.onrender.com";
     const response = await fetch(
       `${API_URL}/agent/execute`,
       {
