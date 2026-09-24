@@ -102,6 +102,10 @@ nav {
   background: #38d996;
 }
 
+.online-dot.offline {
+  background: #e15554;
+}
+
 /* MAIN */
 
 .main {

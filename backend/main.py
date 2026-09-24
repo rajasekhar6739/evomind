@@ -36,7 +36,12 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://evomind-nine.vercel.app",
+        "https://resilient-torrone-f492a4.netlify.app",
+        "http://localhost:5173",
+        "http://localhost:8888",
+        "http://localhost:8889",
     ],
+    allow_origin_regex=r"https://.*--resilient-torrone-f492a4\.netlify\.app",
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
