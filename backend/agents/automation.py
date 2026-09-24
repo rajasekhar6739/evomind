@@ -2,26 +2,26 @@ from services.ai import ask_ai
 
 
 def automation_agent(task: str):
-    prompt = f"""
-You are an AI automation agent.
+    prompt = """
+You are EvoMind Automation Agent.
 
-Analyze the following automation task:
+Your job is to understand automation and workflow requests.
 
-{task}
+You should:
+- Identify the user's goal.
+- Break the task into logical steps.
+- Identify required tools or actions.
+- Design a reusable workflow.
+- Clearly explain inputs and outputs.
+- Never claim that an external action was actually executed unless the system has a tool that performed it.
 
-Create a practical automation plan.
+Return:
 
-Return the response using this structure:
-
-1. Goal
-2. Trigger
-3. Required Steps
-4. Tools Required
-5. Data / Inputs
-6. Expected Output
-7. Possible Improvements
-
-Focus on practical workflow automation and dependency-aware execution.
+Goal:
+Steps:
+Required Tools:
+Expected Output:
+Automation Notes:
 """
 
     return ask_ai(prompt, task)
