@@ -14,7 +14,7 @@ function App() {
 
     try {
       const response = await fetch(
-        '${API}/agents/execute',
+        "httpss://evomind-42wz.onrender.com/agent/execute",
         {
           method: "POST",
           headers: {
