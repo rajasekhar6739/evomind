@@ -4,102 +4,160 @@ from agents.automation import automation_agent
 from tools.registry import execute_tool
 
 
-def detect_agent(task: str):
-    text = task.lower()
+def detect_agent(task: str) -> str:
+    text = task.lower().strip()
 
+    # -------------------------
     # Calculator
+    # -------------------------
     calculator_words = [
         "calculate",
-        "add",
-        "subtract",
+        "calculator",
         "multiply",
         "divide",
-        "*",
-        "+",
-        "-",
-        "/"
+        "addition",
+        "add",
+        "subtract",
+        "minus",
+        "times",
     ]
 
-    if any(word in text for word in calculator_words):
+    if (
+        any(word in text for word in calculator_words)
+        or any(symbol in text for symbol in ["*", "+", "/"])
+    ):
         return "calculator"
 
+    # -------------------------
     # Research
+    # -------------------------
     research_words = [
         "research",
-        "explain",
-        "find information",
         "what is",
         "who is",
-        "latest",
+        "explain",
+        "find information",
+        "analyze",
+        "analysis",
         "compare",
-        "analyze"
+        "difference between",
+        "how does",
+        "why does",
+        "latest information",
     ]
 
     if any(word in text for word in research_words):
         return "research"
 
-    # Writing
-    writing_words = [
+    # -------------------------
+    # Writer
+    # -------------------------
+    writer_words = [
         "write",
         "draft",
         "email",
+        "cover letter",
+        "resume",
+        "cv",
         "article",
         "blog",
-        "resume",
-        "cover letter",
         "rewrite",
-        "content"
+        "rewrite this",
+        "create content",
+        "professional message",
     ]
 
-    if any(word in text for word in writing_words):
+    if any(word in text for word in writer_words):
         return "writer"
 
+    # -------------------------
     # Automation
+    # -------------------------
     automation_words = [
         "automate",
         "automation",
         "workflow",
         "schedule",
-        "create workflow",
-        "run workflow"
+        "automatically",
+        "create a workflow",
+        "build a workflow",
+        "run workflow",
     ]
 
     if any(word in text for word in automation_words):
         return "automation"
 
+    # Default
     return "research"
 
 
 def execute_task(task: str):
 
+    if not task or not task.strip():
+        return {
+            "status": "error",
+            "message": "Task cannot be empty"
+        }
+
     agent = detect_agent(task)
 
+    # -------------------------
+    # Calculator
+    # -------------------------
     if agent == "calculator":
+
+        result = execute_tool(
+            "calculator",
+            task
+        )
+
         return {
-            "agent": "calculator",
+            "status": "success",
+            "agent": "orchestrator",
             "tool_selected": "calculator",
-            "result": execute_tool("calculator", task)
+            "result": result
         }
 
+    # -------------------------
+    # Research Agent
+    # -------------------------
     if agent == "research":
+
+        result = research_agent(task)
+
         return {
+            "status": "success",
             "agent": "research",
-            "result": research_agent(task)
+            "result": result
         }
 
+    # -------------------------
+    # Writing Agent
+    # -------------------------
     if agent == "writer":
+
+        result = writer_agent(task)
+
         return {
+            "status": "success",
             "agent": "writer",
-            "result": writer_agent(task)
+            "result": result
         }
 
+    # -------------------------
+    # Automation Agent
+    # -------------------------
     if agent == "automation":
+
+        result = automation_agent(task)
+
         return {
+            "status": "success",
             "agent": "automation",
-            "result": automation_agent(task)
+            "result": result
         }
 
     return {
-        "agent": "research",
-        "result": research_agent(task)
+        "status": "error",
+        "message": "No suitable agent found"
     }
