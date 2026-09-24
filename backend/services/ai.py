@@ -1,14 +1,22 @@
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
 
-def ask_ai(instruction: str, user_input: str) -> str:
-    return f"""
-EvoMind AI Response
+load_dotenv()
 
-Instruction:
-{instruction}
+api_key = os.getenv("OPENAI_API_KEY")
 
-User Request:
-{user_input}
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY is not configured")
 
-Summary:
-This is a demo AI response generated in offline mode for the EvoMind project.
-"""
+client = OpenAI(api_key=api_key)
+
+
+def ask_ai(system_prompt: str, user_input: str) -> str:
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        instructions=system_prompt,
+        input=user_input,
+    )
+
+    return response.output_text
