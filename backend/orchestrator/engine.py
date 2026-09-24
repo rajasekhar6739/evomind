@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-import re
-
 from tools.registry import execute_tool
-from services.ai import ask_ai
 
-=======
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
 from agents.research import research_agent
 from agents.writer import writer_agent
 from agents.automation import automation_agent
-from tools.registry import execute_tool
 
 
 def detect_agent(task: str) -> str:
@@ -21,13 +14,15 @@ def detect_agent(task: str) -> str:
     calculator_words = [
         "calculate",
         "calculator",
+        "compute",
         "multiply",
-        "divide",
-        "addition",
-        "add",
-        "subtract",
-        "minus",
         "times",
+        "divide",
+        "divided by",
+        "plus",
+        "minus",
+        "subtract",
+        "addition",
     ]
 
     if (
@@ -37,7 +32,7 @@ def detect_agent(task: str) -> str:
         return "calculator"
 
     # -------------------------
-    # Research
+    # Research Agent
     # -------------------------
     research_words = [
         "research",
@@ -45,23 +40,27 @@ def detect_agent(task: str) -> str:
         "who is",
         "explain",
         "find information",
+        "information about",
         "analyze",
         "analysis",
+        "study",
         "compare",
         "difference between",
         "how does",
         "why does",
         "latest information",
+        "investigate",
     ]
 
     if any(word in text for word in research_words):
         return "research"
 
     # -------------------------
-    # Writer
+    # Writer Agent
     # -------------------------
     writer_words = [
         "write",
+        "writer",
         "draft",
         "email",
         "cover letter",
@@ -69,9 +68,10 @@ def detect_agent(task: str) -> str:
         "cv",
         "article",
         "blog",
+        "content",
+        "document",
         "rewrite",
-        "rewrite this",
-        "create content",
+        "compose",
         "professional message",
     ]
 
@@ -79,7 +79,7 @@ def detect_agent(task: str) -> str:
         return "writer"
 
     # -------------------------
-    # Automation
+    # Automation Agent
     # -------------------------
     automation_words = [
         "automate",
@@ -90,6 +90,9 @@ def detect_agent(task: str) -> str:
         "create a workflow",
         "build a workflow",
         "run workflow",
+        "process",
+        "pipeline",
+        "trigger",
     ]
 
     if any(word in text for word in automation_words):
@@ -104,203 +107,86 @@ def execute_task(task: str):
     if not task or not task.strip():
         return {
             "status": "error",
-            "message": "Task cannot be empty"
+            "message": "Task cannot be empty",
         }
 
-<<<<<<< HEAD
+    agent = detect_agent(task)
+
     # =========================================================
     # 1. CALCULATOR
     # =========================================================
 
-    # Only treat it as calculator when there is an actual
-    # mathematical expression or explicit calculation language.
-    has_math_expression = bool(
-        re.search(r"\d+\s*[\+\-\*\/%]\s*\d+", task_lower)
-    )
-
-    calculator_words = [
-        "calculate",
-        "calculator",
-        "compute",
-        "multiply",
-        "times",
-        "divided by",
-        "divide",
-        "plus",
-        "minus",
-    ]
-
-    if has_math_expression or any(
-        word in task_lower for word in calculator_words
-    ):
-
-        expression = task_lower
-
-        # Remove natural-language calculator words
-        remove_words = [
-            "calculate",
-            "calculator",
-            "compute",
-        ]
-
-        for word in remove_words:
-            expression = expression.replace(word, "")
-
-        # Convert natural language math
-        expression = expression.replace("multiply", "*")
-        expression = expression.replace("times", "*")
-        expression = expression.replace("divided by", "/")
-        expression = expression.replace("divide", "/")
-        expression = expression.replace("plus", "+")
-        expression = expression.replace("minus", "-")
-
-        expression = expression.strip()
-=======
-    agent = detect_agent(task)
-
-    # -------------------------
-    # Calculator
-    # -------------------------
     if agent == "calculator":
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
 
         result = execute_tool(
             "calculator",
-            task
+            task,
         )
 
         return {
             "status": "success",
-            "agent": "orchestrator",
+            "task": task,
+            "agent": "calculator",
             "tool_selected": "calculator",
-            "result": result
+            "result": result,
         }
 
-    # -------------------------
-    # Research Agent
-    # -------------------------
+    # =========================================================
+    # 2. RESEARCH AGENT
+    # =========================================================
+
     if agent == "research":
-
-<<<<<<< HEAD
-    research_words = [
-        "research",
-        "research on",
-        "analyze",
-        "analysis",
-        "study",
-        "information about",
-        "explain",
-        "explain how",
-        "tell me about",
-        "investigate",
-        "compare",
-        "what is",
-        "how does",
-        "why does",
-    ]
-
-    if any(word in task_lower for word in research_words):
 
         result = research_agent(task)
 
         return {
+            "status": "success",
             "task": task,
             "agent": "research_agent",
             "tool_selected": "research_agent",
-=======
-        result = research_agent(task)
-
-        return {
-            "status": "success",
-            "agent": "research",
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
-            "result": result
+            "result": result,
         }
 
-    # -------------------------
-    # Writing Agent
-    # -------------------------
+    # =========================================================
+    # 3. WRITER AGENT
+    # =========================================================
+
     if agent == "writer":
-
-<<<<<<< HEAD
-    writer_words = [
-        "write",
-        "writer",
-        "email",
-        "article",
-        "content",
-        "document",
-        "draft",
-        "compose",
-        "rewrite",
-        "resume",
-        "cover letter",
-        "blog",
-        "post",
-    ]
-
-    if any(word in task_lower for word in writer_words):
 
         result = writer_agent(task)
 
         return {
+            "status": "success",
             "task": task,
             "agent": "writer_agent",
             "tool_selected": "writer_agent",
-=======
-        result = writer_agent(task)
-
-        return {
-            "status": "success",
-            "agent": "writer",
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
-            "result": result
+            "result": result,
         }
 
-    # -------------------------
-    # Automation Agent
-    # -------------------------
+    # =========================================================
+    # 4. AUTOMATION AGENT
+    # =========================================================
+
     if agent == "automation":
-
-<<<<<<< HEAD
-    automation_words = [
-        "automate",
-        "automation",
-        "workflow",
-        "process",
-        "schedule",
-        "automatically",
-        "pipeline",
-        "trigger",
-    ]
-
-    if any(word in task_lower for word in automation_words):
 
         result = automation_agent(task)
 
         return {
+            "status": "success",
             "task": task,
             "agent": "automation_agent",
             "tool_selected": "automation_agent",
-=======
-        result = automation_agent(task)
-
-        return {
-            "status": "success",
-            "agent": "automation",
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
-            "result": result
+            "result": result,
         }
 
+    # =========================================================
+    # FALLBACK
+    # =========================================================
+
     return {
-<<<<<<< HEAD
-        "task": task,
-        "agent": "general_ai",
-        "tool_selected": "general_ai",
-        "result": response
-    }
-=======
         "status": "error",
-        "message": "No suitable agent found"
+        "task": task,
+        "agent": "unknown",
+        "tool_selected": None,
+        "message": "No suitable agent found",
     }
->>>>>>> ec18223e44072a4474fb2a098010b181ed4894e2
