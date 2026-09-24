@@ -1,3 +1,5 @@
+import re
+
 from tools.registry import execute_tool
 from services.ai import ask_ai
 
@@ -11,35 +13,44 @@ def execute_task(task: str):
     task_lower = task.lower().strip()
 
     # =========================================================
-    # 1. CALCULATOR TOOL
+    # 1. CALCULATOR
     # =========================================================
 
-    math_words = [
-        "+",
-        "-",
-        "*",
-        "/",
-        "%",
+    # Only treat it as calculator when there is an actual
+    # mathematical expression or explicit calculation language.
+    has_math_expression = bool(
+        re.search(r"\d+\s*[\+\-\*\/%]\s*\d+", task_lower)
+    )
+
+    calculator_words = [
         "calculate",
         "calculator",
         "compute",
-        "what is",
+        "multiply",
+        "times",
+        "divided by",
+        "divide",
+        "plus",
+        "minus",
     ]
 
-    if any(word in task_lower for word in math_words):
+    if has_math_expression or any(
+        word in task_lower for word in calculator_words
+    ):
 
         expression = task_lower
 
-        # Remove natural-language words
-        for word in [
+        # Remove natural-language calculator words
+        remove_words = [
             "calculate",
             "calculator",
-            "what is",
             "compute",
-        ]:
+        ]
+
+        for word in remove_words:
             expression = expression.replace(word, "")
 
-        # Convert simple natural-language math
+        # Convert natural language math
         expression = expression.replace("multiply", "*")
         expression = expression.replace("times", "*")
         expression = expression.replace("divided by", "/")
@@ -65,57 +76,89 @@ def execute_task(task: str):
     # 2. RESEARCH AGENT
     # =========================================================
 
-    if any(word in task_lower for word in [
+    research_words = [
         "research",
+        "research on",
         "analyze",
+        "analysis",
         "study",
-        "information",
+        "information about",
         "explain",
-    ]):
+        "explain how",
+        "tell me about",
+        "investigate",
+        "compare",
+        "what is",
+        "how does",
+        "why does",
+    ]
+
+    if any(word in task_lower for word in research_words):
+
+        result = research_agent(task)
 
         return {
             "task": task,
             "agent": "research_agent",
-            "tool_selected": "rag",
-            "result": research_agent(task)
+            "tool_selected": "research_agent",
+            "result": result
         }
 
     # =========================================================
     # 3. WRITER AGENT
     # =========================================================
 
-    if any(word in task_lower for word in [
+    writer_words = [
         "write",
+        "writer",
         "email",
         "article",
         "content",
         "document",
         "draft",
-    ]):
+        "compose",
+        "rewrite",
+        "resume",
+        "cover letter",
+        "blog",
+        "post",
+    ]
+
+    if any(word in task_lower for word in writer_words):
+
+        result = writer_agent(task)
 
         return {
             "task": task,
             "agent": "writer_agent",
-            "tool_selected": None,
-            "result": writer_agent(task)
+            "tool_selected": "writer_agent",
+            "result": result
         }
 
     # =========================================================
     # 4. AUTOMATION AGENT
     # =========================================================
 
-    if any(word in task_lower for word in [
+    automation_words = [
         "automate",
         "automation",
         "workflow",
         "process",
-    ]):
+        "schedule",
+        "automatically",
+        "pipeline",
+        "trigger",
+    ]
+
+    if any(word in task_lower for word in automation_words):
+
+        result = automation_agent(task)
 
         return {
             "task": task,
             "agent": "automation_agent",
-            "tool_selected": "workflow",
-            "result": automation_agent(task)
+            "tool_selected": "automation_agent",
+            "result": result
         }
 
     # =========================================================
@@ -131,6 +174,6 @@ def execute_task(task: str):
     return {
         "task": task,
         "agent": "general_ai",
-        "tool_selected": None,
+        "tool_selected": "general_ai",
         "result": response
     }
