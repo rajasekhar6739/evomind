@@ -1,3 +1,7 @@
+## Backend connection
+
+The app calls the EvoMind API at the URL in `VITE_API_URL` (falls back to `https://evomind-ouhh.onrender.com` if unset). Set `VITE_API_URL` as an environment variable in the Netlify site configuration to point at a different backend deployment.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

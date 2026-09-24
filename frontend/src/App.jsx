@@ -1,9 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
+
+const API_URL = (import.meta.env.VITE_API_URL || "https://evomind-ouhh.onrender.com").replace(/\/+$/, "");
+
 function App() {
   const [task, setTask] = useState("");
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const [backendStatus, setBackendStatus] = useState("checking");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch(`${API_URL}/health`)
+      .then((response) => {
+        if (!cancelled) setBackendStatus(response.ok ? "online" : "offline");
+      })
+      .catch(() => {
+        if (!cancelled) setBackendStatus("offline");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
 const runAgent = async () => {
   if (!task.trim()) return;
 
@@ -12,7 +33,7 @@ const runAgent = async () => {
 
   try {
     const response = await fetch(
-      "https://evomind-ouhh.onrender.com/agent/execute",
+      `${API_URL}/agent/execute`,
       {
         method: "POST",
         headers: {
@@ -29,6 +50,7 @@ const runAgent = async () => {
       throw new Error(data?.detail || `HTTP ${response.status}`);
     }
 
+    setBackendStatus("online");
     setResult(
       data?.result?.result ??
       data?.result ??
@@ -36,7 +58,10 @@ const runAgent = async () => {
     );
   } catch (error) {
     console.error(error);
-    setResult(`Connection failed: ${error.message}`);
+    setBackendStatus("offline");
+    setResult(
+      `Connection failed: ${error.message}. The backend may be asleep (free-tier services spin down when idle) — try again in a moment, or confirm VITE_API_URL points to a running backend.`
+    );
   } finally {
     setLoading(false);
   }
@@ -78,8 +103,10 @@ const runAgent = async () => {
           </div>
 
           <div className="status">
-            <span className="online-dot"></span>
-            Backend Connected
+            <span className={`online-dot${backendStatus === "online" ? "" : " offline"}`}></span>
+            {backendStatus === "checking" && "Checking backend…"}
+            {backendStatus === "online" && "Backend Connected"}
+            {backendStatus === "offline" && "Backend Unreachable"}
           </div>
         </header>
 
