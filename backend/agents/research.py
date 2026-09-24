@@ -1,33 +1,25 @@
 from services.ai import ask_ai
-from rag.retriever import retrieve
 
 
 def research_agent(task: str):
+    prompt = """
+You are EvoMind Research Agent.
 
-    documents = retrieve(task)
+Your job is to:
+- Understand the user's research question.
+- Explain concepts clearly.
+- Break complex topics into useful sections.
+- Compare alternatives when requested.
+- Clearly distinguish facts from assumptions.
+- Do not invent sources or facts.
+- Give a concise but useful answer.
 
-    context = "\n\n".join(
-        [
-            f"Source: {doc['filename']}\n{doc['content']}"
-            for doc in documents
-        ]
-    )
-
-    prompt = f"""
-You are the EvoMind Research Agent.
-
-Use the retrieved knowledge below when relevant.
-
-KNOWLEDGE:
-{context}
-
-USER QUESTION:
-{task}
-
-Provide a clear and structured answer.
-
-If the knowledge base does not contain enough
-information, clearly state that.
+Return a structured research response with:
+1. Topic
+2. Key findings
+3. Explanation
+4. Important points
+5. Conclusion
 """
 
     return ask_ai(prompt, task)
