@@ -1,136 +1,105 @@
-from tools.registry import execute_tool
-from services.ai import ask_ai
-
 from agents.research import research_agent
 from agents.writer import writer_agent
 from agents.automation import automation_agent
+from tools.registry import execute_tool
+
+
+def detect_agent(task: str):
+    text = task.lower()
+
+    # Calculator
+    calculator_words = [
+        "calculate",
+        "add",
+        "subtract",
+        "multiply",
+        "divide",
+        "*",
+        "+",
+        "-",
+        "/"
+    ]
+
+    if any(word in text for word in calculator_words):
+        return "calculator"
+
+    # Research
+    research_words = [
+        "research",
+        "explain",
+        "find information",
+        "what is",
+        "who is",
+        "latest",
+        "compare",
+        "analyze"
+    ]
+
+    if any(word in text for word in research_words):
+        return "research"
+
+    # Writing
+    writing_words = [
+        "write",
+        "draft",
+        "email",
+        "article",
+        "blog",
+        "resume",
+        "cover letter",
+        "rewrite",
+        "content"
+    ]
+
+    if any(word in text for word in writing_words):
+        return "writer"
+
+    # Automation
+    automation_words = [
+        "automate",
+        "automation",
+        "workflow",
+        "schedule",
+        "create workflow",
+        "run workflow"
+    ]
+
+    if any(word in text for word in automation_words):
+        return "automation"
+
+    return "research"
 
 
 def execute_task(task: str):
 
-    task_lower = task.lower().strip()
+    agent = detect_agent(task)
 
-    # =========================================================
-    # 1. CALCULATOR TOOL
-    # =========================================================
-
-    math_words = [
-        "+",
-        "-",
-        "*",
-        "/",
-        "%",
-        "calculate",
-        "calculator",
-        "compute",
-        "what is",
-    ]
-
-    if any(word in task_lower for word in math_words):
-
-        expression = task_lower
-
-        # Remove natural-language words
-        for word in [
-            "calculate",
-            "calculator",
-            "what is",
-            "compute",
-        ]:
-            expression = expression.replace(word, "")
-
-        # Convert simple natural-language math
-        expression = expression.replace("multiply", "*")
-        expression = expression.replace("times", "*")
-        expression = expression.replace("divided by", "/")
-        expression = expression.replace("divide", "/")
-        expression = expression.replace("plus", "+")
-        expression = expression.replace("minus", "-")
-
-        expression = expression.strip()
-
-        result = execute_tool(
-            "calculator",
-            expression
-        )
-
+    if agent == "calculator":
         return {
-            "task": task,
-            "agent": "orchestrator",
+            "agent": "calculator",
             "tool_selected": "calculator",
-            "result": result
+            "result": execute_tool("calculator", task)
         }
 
-    # =========================================================
-    # 2. RESEARCH AGENT
-    # =========================================================
-
-    if any(word in task_lower for word in [
-        "research",
-        "analyze",
-        "study",
-        "information",
-        "explain",
-    ]):
-
+    if agent == "research":
         return {
-            "task": task,
-            "agent": "research_agent",
-            "tool_selected": "rag",
+            "agent": "research",
             "result": research_agent(task)
         }
 
-    # =========================================================
-    # 3. WRITER AGENT
-    # =========================================================
-
-    if any(word in task_lower for word in [
-        "write",
-        "email",
-        "article",
-        "content",
-        "document",
-        "draft",
-    ]):
-
+    if agent == "writer":
         return {
-            "task": task,
-            "agent": "writer_agent",
-            "tool_selected": None,
+            "agent": "writer",
             "result": writer_agent(task)
         }
 
-    # =========================================================
-    # 4. AUTOMATION AGENT
-    # =========================================================
-
-    if any(word in task_lower for word in [
-        "automate",
-        "automation",
-        "workflow",
-        "process",
-    ]):
-
+    if agent == "automation":
         return {
-            "task": task,
-            "agent": "automation_agent",
-            "tool_selected": "workflow",
+            "agent": "automation",
             "result": automation_agent(task)
         }
 
-    # =========================================================
-    # 5. GENERAL AI
-    # =========================================================
-
-    response = ask_ai(
-        "You are the EvoMind general AI assistant. "
-        "Answer the user's request clearly and helpfully.",
-        task
-    )
-
     return {
-        "task": task,
-        "agent": "general_ai",
-        "tool_selected": None,
-        "result": response
+        "agent": "research",
+        "result": research_agent(task)
     }
