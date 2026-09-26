@@ -12,7 +12,7 @@ const runAgent = async () => {
 
   try {
     const response = await fetch(
-      "https://evomind-ouhh.onrender.com/agent/execute",
+      "https://evomind-4455.onrender.com/agent/execute",
       {
         method: "POST",
         headers: {
